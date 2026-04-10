@@ -4,7 +4,7 @@
 template <typename T>
 class LinearProbing : public HashTableClosed<T> {
 private:
-    int skip; // skip factor
+    int skip;
 public:
     LinearProbing(int size = 101, int skipFactor = 3)
         : HashTableClosed<T>(size), skip(skipFactor) {}
