@@ -1,0 +1,58 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: compile
+      id: compile
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: compile
+        setup-command: ''
+        command: g++ --std=c++17  main.cpp -o main
+        timeout: 10
+        max-score: 10
+    - name: Run
+      id: run
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Run
+        setup-command: ''
+        command: "./main"
+        input: ''
+        expected-output: |2-
+
+          --- Linear Probing (skip=3) ---
+          Average probes (insert): 3.97
+          Search hits (first 10 present keys): 10/10
+          Average probes (search): 16.90
+
+          --- Quadratic Probing ---
+          Average probes (insert): 2.97
+          Search hits (first 10 present keys): 10/10
+          Average probes (search): 34.50
+
+          --- Double Hashing ---
+          Average probes (insert): 3.60
+          Search hits (first 10 present keys): 10/10
+          Average probes (search): 41.70
+        comparison-method: contains
+        timeout: 10
+        max-score: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        COMPILE_RESULTS: "${{steps.compile.outputs.result}}"
+        RUN_RESULTS: "${{steps.run.outputs.result}}"
+      with:
+        runners: compile,run
