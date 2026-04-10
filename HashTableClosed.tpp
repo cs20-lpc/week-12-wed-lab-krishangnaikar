@@ -17,11 +17,6 @@ int HashTableClosed<T>::insert(const T& key)
             N++;
             return probes;
         }
-
-        // optional: avoid inserting duplicates twice
-        if (table[index] == key) {
-            return probes;
-        }
     }
 
     throw overflow_error("No empty slot found");
